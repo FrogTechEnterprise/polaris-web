@@ -14,6 +14,8 @@
   var feedback = document.getElementById('form-feedback');
   var progressBar = document.querySelector('[data-scroll-progress]');
   var backToTop = document.querySelector('[data-back-to-top]');
+  var methodTimeline = document.querySelector('.method-timeline');
+  var timelineSteps = methodTimeline ? methodTimeline.querySelectorAll('.timeline-step') : [];
 
   function toggleMenu() {
     var expanded = menuToggle.getAttribute('aria-expanded') === 'true';
@@ -195,14 +197,66 @@
         backToTop.classList.remove('is-visible');
       }
     }
+
+    updateTimelineProgress();
+  }
+
+  function updateTimelineProgress() {
+    if (!methodTimeline) {
+      return;
+    }
+
+    var rect = methodTimeline.getBoundingClientRect();
+    var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    var start = viewportHeight * 0.72;
+    var end = viewportHeight * 0.32;
+    var travel = rect.height + start - end;
+    var rawProgress = (start - rect.top) / travel;
+    var progress = Math.min(1, Math.max(0, rawProgress));
+    var firstStep = timelineSteps.length ? timelineSteps[0] : null;
+    var middleStep = timelineSteps.length > 1 ? timelineSteps[1] : null;
+    var lastStep = timelineSteps.length ? timelineSteps[timelineSteps.length - 1] : null;
+    var firstStop = firstStep ? (firstStep.offsetTop + (firstStep.offsetHeight / 2)) / rect.height : 0;
+    var middleStop = middleStep ? (middleStep.offsetTop + (middleStep.offsetHeight / 2)) / rect.height : 0.45;
+    var lastStop = lastStep ? (lastStep.offsetTop + (lastStep.offsetHeight / 2)) / rect.height : 1;
+    var visibleProgress = firstStop + (progress * (lastStop - firstStop));
+    var drawProgress = visibleProgress;
+
+    if (middleStep) {
+      var middleSkipStart = Math.max(firstStop, middleStop - 0.07);
+      var middleExit = Math.min(lastStop, middleStop + 0.16);
+      var middleBoost = middleExit - middleSkipStart;
+
+      if (visibleProgress >= middleSkipStart) {
+        drawProgress = Math.min(lastStop, visibleProgress + middleBoost);
+      }
+    }
+
+    methodTimeline.style.setProperty('--timeline-start', (firstStop * 100).toFixed(1) + '%');
+    methodTimeline.style.setProperty('--timeline-middle', (middleStop * 100).toFixed(1) + '%');
+    methodTimeline.style.setProperty('--timeline-end', (lastStop * 100).toFixed(1) + '%');
+    methodTimeline.style.setProperty('--timeline-progress', (drawProgress * 100).toFixed(1) + '%');
+
+    timelineSteps.forEach(function (step, index) {
+      var stepCenter = step.offsetTop + (step.offsetHeight / 2);
+      var stepProgress = stepCenter / rect.height;
+      var revealLead = index === timelineSteps.length - 1 ? 0.18 : 0.12;
+
+      if (index === 0 || drawProgress >= stepProgress - revealLead) {
+        step.classList.add('is-timeline-reached');
+      } else {
+        step.classList.remove('is-timeline-reached');
+      }
+    });
   }
 
   function setupScrollEffects() {
-    if (!progressBar && !backToTop) {
+    if (!progressBar && !backToTop && !methodTimeline) {
       return;
     }
 
     window.addEventListener('scroll', updateScrollProgress, { passive: true });
+    window.addEventListener('resize', updateScrollProgress);
     updateScrollProgress();
 
     if (backToTop) {
