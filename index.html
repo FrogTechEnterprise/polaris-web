@@ -45,10 +45,10 @@
         </button>
 
         <nav id="main-menu" class="main-nav" data-menu>
-          <a href="#por-que" data-i18n="nav.porque">Enfoque</a>
           <a href="#que" data-i18n="nav.que">Servicios</a>
-          <a href="#metodo" data-i18n="nav.metodo">Metodo</a>
+          <a href="#por-que" data-i18n="nav.porque">Enfoque</a>
           <a href="#quien" data-i18n="nav.quien">Equipo</a>
+          <a href="#testimonios" data-i18n="nav.testimonios">Testimonios</a>
           <a href="#contacto" class="btn btn-primary" data-i18n="nav.cta">Contacto</a>
         </nav>
       </div>
@@ -63,8 +63,8 @@
       <div class="container hero-content" data-reveal>
         <span class="hero-badge" data-i18n="hero.badge">Estrategia comercial · Marketing · Digitalización</span>
         <h1 data-i18n-html="hero.title"><span>Vuestra empresa necesita crecer.</span><span>Nosotros podemos ayudaros.</span></h1>
-        <p data-i18n="hero.subtitle">
-          Acompanamos a pymes y marcas a ordenar prioridades, tomar mejores decisiones
+        <p data-i18n-html="hero.subtitle">
+          Acompanamos a <strong>pymes y autonomos</strong> a ordenar prioridades, tomar mejores decisiones
           y convertir la estrategia en acciones concretas.
         </p>
         <div class="hero-actions">
@@ -73,8 +73,57 @@
       </div>
     </section>
 
+    <section id="que" class="section">
+      <div class="container" data-reveal>
+        <p class="eyebrow" data-i18n="que.eyebrow">Que hacemos</p>
+        <h2 data-i18n="que.title">Creamos impacto donde el negocio crece.</h2>
+        <p class="services-intro" data-i18n="que.intro">
+          Trabajamos sobre las áreas que más afectan al crecimiento: el modelo comercial,
+          la forma de llegar al mercado y las herramientas que sostienen la operación.
+        </p>
+        <div class="services-list" aria-label="Áreas de servicio" data-i18n-aria-label="a11y.servicesList">
+          <article class="service-item">
+            <span class="service-index" aria-hidden="true">01</span>
+            <h3 data-i18n="que.card1.title">Modelo comercial</h3>
+            <p class="service-lead" data-i18n="que.card1.lead">Ordenamos propuesta de valor, prioridades comerciales y ruta de crecimiento.</p>
+            <p class="service-focus" data-i18n="que.card1.focus">Trabajamos en: encaje mercado-oferta, líneas de ingreso y decisiones prioritarias.</p>
+          </article>
+          <article class="service-item">
+            <span class="service-index" aria-hidden="true">02</span>
+            <h3 data-i18n="que.card2.title">Mercado y marca</h3>
+            <p class="service-lead" data-i18n="que.card2.lead">Definimos cómo comunicar, captar y fidelizar con una marca más clara.</p>
+            <p class="service-focus" data-i18n="que.card2.focus">Trabajamos en: posicionamiento, mensaje, contenido y demanda cualificada.</p>
+          </article>
+          <article class="service-item">
+            <span class="service-index" aria-hidden="true">03</span>
+            <h3 data-i18n="que.card3.title">Operación digital</h3>
+            <p class="service-lead" data-i18n="que.card3.lead">Incorporamos herramientas y procesos que ayudan al equipo sin complicar la operación.</p>
+            <p class="service-focus" data-i18n="que.card3.focus">Trabajamos en: automatización, herramientas útiles y seguimiento operativo.</p>
+          </article>
+          <article class="service-item">
+            <span class="service-index" aria-hidden="true">04</span>
+            <h3 data-i18n="que.card4.title">Analítica y decisiones</h3>
+            <p class="service-lead" data-i18n="que.card4.lead">Convertimos datos dispersos en señales claras para decidir con rapidez y menos riesgo.</p>
+            <p class="service-focus" data-i18n="que.card4.focus">Trabajamos en: cuadro de mando, métricas clave y lectura práctica de resultados.</p>
+          </article>
+          <article class="service-item">
+            <span class="service-index" aria-hidden="true">05</span>
+            <h3 data-i18n="que.card5.title">Acompañamiento ejecutivo</h3>
+            <p class="service-lead" data-i18n="que.card5.lead">Alineamos equipo, prioridades y ritmo de ejecución para que la estrategia avance de verdad.</p>
+            <p class="service-focus" data-i18n="que.card5.focus">Trabajamos en: seguimiento, foco semanal y desbloqueo de decisiones.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <div class="paired-viewport">
       <section id="por-que" class="section section-dark paired-top">
+        <div class="bg-animation" aria-hidden="true">
+          <div id="stars"></div>
+          <div id="stars2"></div>
+          <div id="stars3"></div>
+          <div id="stars4"></div>
+        </div>
         <div class="container split" data-reveal>
           <div>
             <p class="eyebrow" data-i18n="porque.eyebrow">Por que lo hacemos</p>
@@ -91,6 +140,9 @@
       </section>
 
       <section class="trust-band paired-bottom" aria-label="Empresas que confian en nosotros" data-i18n-aria-label="a11y.trustSection">
+        <div class="boat-lane">
+          <button type="button" class="boat" aria-label="Lanzar estrellas"></button>
+        </div>
         <div class="container trust-band-inner" data-reveal>
           <p class="trust-title" data-i18n="trust.title">Empresas que confian en nosotros</p>
           <p class="trust-copy" data-i18n-html="trust.copyHtml">
@@ -102,81 +154,12 @@
       </section>
     </div>
 
-    <section id="que" class="section">
-      <div class="container" data-reveal>
-        <p class="eyebrow" data-i18n="que.eyebrow">Que hacemos</p>
-        <h2 data-i18n="que.title">Creamos impacto donde el negocio crece.</h2>
-        <p class="services-intro" data-i18n="que.intro">
-          Trabajamos sobre las áreas que más afectan al crecimiento: el modelo comercial,
-          la forma de llegar al mercado y las herramientas que sostienen la operación.
-        </p>
-        <div class="services-list" aria-label="Áreas de servicio" data-i18n-aria-label="a11y.servicesList">
-          <article class="service-item" data-reveal data-delay="60">
-            <span class="service-index" aria-hidden="true">01</span>
-            <h3 data-i18n="que.card1.title">Modelo comercial</h3>
-            <p class="service-lead" data-i18n="que.card1.lead">Ordenamos propuesta de valor, prioridades comerciales y ruta de crecimiento.</p>
-            <p class="service-focus" data-i18n="que.card1.focus">Trabajamos en: encaje mercado-oferta, líneas de ingreso y decisiones prioritarias.</p>
-          </article>
-          <article class="service-item" data-reveal data-delay="120">
-            <span class="service-index" aria-hidden="true">02</span>
-            <h3 data-i18n="que.card2.title">Mercado y marca</h3>
-            <p class="service-lead" data-i18n="que.card2.lead">Definimos cómo comunicar, captar y fidelizar con una marca más clara.</p>
-            <p class="service-focus" data-i18n="que.card2.focus">Trabajamos en: posicionamiento, mensaje, contenido y demanda cualificada.</p>
-          </article>
-          <article class="service-item" data-reveal data-delay="180">
-            <span class="service-index" aria-hidden="true">03</span>
-            <h3 data-i18n="que.card3.title">Operación digital</h3>
-            <p class="service-lead" data-i18n="que.card3.lead">Incorporamos herramientas y procesos que ayudan al equipo sin complicar la operación.</p>
-            <p class="service-focus" data-i18n="que.card3.focus">Trabajamos en: automatización, herramientas útiles y seguimiento operativo.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="metodo" class="section section-soft">
-      <div class="container" data-reveal>
-        <p class="eyebrow" data-i18n="metodo.eyebrow">Metodo de trabajo</p>
-        <h2 data-i18n="metodo.title">Un proceso claro para decisiones mas rapidas y mejores resultados.</h2>
-        <p class="method-intro" data-i18n="metodo.intro">
-          Cada proyecto se adapta a la etapa real del negocio, con foco en impacto, ritmo de ejecucion y seguimiento continuo.
-        </p>
-        <div class="method-timeline" aria-label="Linea de tiempo del metodo de trabajo" data-i18n-aria-label="a11y.methodTimeline">
-          <span class="timeline-progress-arrow" aria-hidden="true"></span>
-          <article class="timeline-step timeline-left timeline-step-1">
-            <h3 data-i18n="metodo.step1.title">Diagnostico</h3>
-            <p data-i18n="metodo.step1.body">Analizamos objetivo, contexto comercial y capacidad operativa para tomar decisiones con base real.</p>
-            <ul>
-              <li data-i18n="metodo.step1.li1">Entrevista de contexto y prioridades</li>
-              <li data-i18n="metodo.step1.li2">Revision de posicionamiento y demanda</li>
-            </ul>
-            <p class="timeline-outcome" data-i18n-html="metodo.step1.outcomeHtml"><strong>Resultado:</strong> mapa claro de prioridades y primeras decisiones con base real.</p>
-          </article>
-          <article class="timeline-step timeline-right timeline-step-2">
-            <h3 data-i18n="metodo.step2.title">Plan accionable</h3>
-            <p data-i18n="metodo.step2.body">Definimos prioridades, responsables, recursos y tiempos para ejecutar sin dispersion.</p>
-            <ul>
-              <li data-i18n="metodo.step2.li1">Roadmap de 90 dias con hitos claros</li>
-              <li data-i18n="metodo.step2.li2">KPIs practicos para seguimiento</li>
-            </ul>
-            <p class="timeline-outcome" data-i18n-html="metodo.step2.outcomeHtml"><strong>Resultado:</strong> hoja de ruta a 90 dias con responsables y metricas definidas.</p>
-          </article>
-          <article class="timeline-step timeline-left timeline-step-3">
-            <h3 data-i18n="metodo.step3.title">Seguimiento</h3>
-            <p data-i18n="metodo.step3.body">Medimos avance, revisamos indicadores y ajustamos el rumbo para sostener crecimiento.</p>
-            <ul>
-              <li data-i18n="metodo.step3.li1">Ritmo de revision quincenal o mensual</li>
-              <li data-i18n="metodo.step3.li2">Decision y ajuste rapido segun resultados</li>
-            </ul>
-            <p class="timeline-outcome" data-i18n-html="metodo.step3.outcomeHtml"><strong>Resultado:</strong> ajustes rapidos y crecimiento sostenido mes a mes.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
     <section id="quien" class="section section-soft">
       <div class="container about" data-reveal>
         <div class="about-figure">
-          <div class="about-image" role="img" aria-label="Equipo reunido en sesion de trabajo" data-i18n-aria-label="a11y.aboutImage"></div>
+          <div class="about-image" role="img" aria-label="Equipo reunido en sesion de trabajo" data-i18n-aria-label="a11y.aboutImage">
+            <canvas class="about-reveal-canvas" data-about-reveal-canvas aria-hidden="true"></canvas>
+          </div>
           <div class="about-snapshot" role="img" aria-label="Detalle de sesion de trabajo en equipo" data-i18n-aria-label="a11y.aboutSnapshot"></div>
           <div class="about-badge" aria-label="Experiencia acumulada" data-i18n-aria-label="a11y.aboutBadge">
             <strong>29+</strong>
@@ -211,6 +194,75 @@
                 Ver LinkedIn
               </a>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="testimonios" class="testimonials-scroll-zone" data-testimonials-scroll-section>
+      <div class="testimonials-animation-stage" data-testimonials-scroll-stage>
+        <div class="testimonials-sticky-canvas">
+          <div class="container testimonials-scroll-intro" data-reveal>
+            <p class="eyebrow" data-i18n="testimonials.eyebrow">Testimonios</p>
+            <h2 data-i18n="testimonials.title">Lo que dicen nuestros clientes</h2>
+            <p data-i18n="testimonials.subtitle">Resultados reales en distintos sectores y contextos.</p>
+          </div>
+
+          <div class="testimonials-avatar-grid">
+            <div class="ts-layer ts-layer-a" data-ts-layer>
+              <img src="https://nanaetben.fr/animation/assets/images/website/Ben-1.png" alt="Avatar Ben 1" class="ts-avatar a1" data-ts-target="1" loading="lazy">
+              <img src="https://nanaetben.fr/animation/assets/images/website/Ben-2.png" alt="Avatar Ben 2" class="ts-avatar a2" data-ts-target="2" loading="lazy">
+              <img src="https://nanaetben.fr/animation/assets/images/website/Nana-3.png" alt="Avatar Nana 3" class="ts-avatar a3" data-ts-target="3" loading="lazy">
+              <img src="https://nanaetben.fr/animation/assets/images/website/Nana-4.png" alt="Avatar Nana 4" class="ts-avatar a4" data-ts-target="4" loading="lazy">
+            </div>
+
+            <div class="ts-layer ts-layer-b" data-ts-layer>
+              <img src="https://nanaetben.fr/animation/assets/images/website/Ben-3.png" alt="Avatar Ben 3" class="ts-avatar a5" data-ts-target="5" loading="lazy">
+              <img src="https://nanaetben.fr/animation/assets/images/website/Nana-2.png" alt="Avatar Nana 2" class="ts-avatar a6" data-ts-target="6" loading="lazy">
+              <img src="https://nanaetben.fr/animation/assets/images/website/Nana-1.png" alt="Avatar Nana 1" class="ts-avatar a7" data-ts-target="1" loading="lazy">
+              <img src="https://nanaetben.fr/animation/assets/images/website/Ben-1.png" alt="Avatar Ben 1" class="ts-avatar a8" data-ts-target="2" loading="lazy">
+            </div>
+
+            <div class="ts-layer ts-layer-c" data-ts-layer>
+              <img src="https://nanaetben.fr/animation/assets/images/website/Nana-4.png" alt="Avatar Nana 4" class="ts-avatar a9" data-ts-target="3" loading="lazy">
+              <img src="https://nanaetben.fr/animation/assets/images/website/Ben-2.png" alt="Avatar Ben 2" class="ts-avatar a10" data-ts-target="4" loading="lazy">
+            </div>
+
+            <article class="ts-scaler-card" data-ts-scaler>
+              <img src="https://nanaetben.fr/animation/assets/images/website/Nana-1.png" alt="Avatar destacado" class="ts-scaler-avatar" loading="lazy">
+              <div class="ts-entries" data-ts-entries>
+                <article class="ts-entry is-active" data-ts-entry="1" data-ts-avatar="https://nanaetben.fr/animation/assets/images/website/Ben-1.png" data-ts-avatar-alt="Avatar de Laura Mendez">
+                  <p data-i18n="testimonials.1.quote">"En tres meses pasamos de improvisar campañas a tener un plan comercial claro. El equipo entiende prioridades y las ventas crecieron de forma sostenida."</p>
+                  <h3 data-i18n="testimonials.1.name">Laura Mendez</h3>
+                  <span data-i18n="testimonials.1.role">Directora comercial · Retail</span>
+                </article>
+                <article class="ts-entry is-hidden-down" data-ts-entry="2" data-ts-avatar="https://nanaetben.fr/animation/assets/images/website/Ben-2.png" data-ts-avatar-alt="Avatar de Adrian Rojas">
+                  <p data-i18n="testimonials.2.quote">"Pasamos de discutir ideas sueltas a ejecutar con orden. Hoy cada accion tiene responsable, fecha y un objetivo medible."</p>
+                  <h3 data-i18n="testimonials.2.name">Adrian Rojas</h3>
+                  <span data-i18n="testimonials.2.role">Socio fundador · Alimentacion</span>
+                </article>
+                <article class="ts-entry is-hidden-down" data-ts-entry="3" data-ts-avatar="https://nanaetben.fr/animation/assets/images/website/Ben-3.png" data-ts-avatar-alt="Avatar de Claudia Paredes">
+                  <p data-i18n="testimonials.3.quote">"Con Polaris mejoramos el mensaje de marca y la captacion. En dos trimestres aumentamos los leads cualificados sin inflar presupuesto."</p>
+                  <h3 data-i18n="testimonials.3.name">Claudia Paredes</h3>
+                  <span data-i18n="testimonials.3.role">Responsable de marketing · Textil</span>
+                </article>
+                <article class="ts-entry is-hidden-down" data-ts-entry="4" data-ts-avatar="https://nanaetben.fr/animation/assets/images/website/Nana-4.png" data-ts-avatar-alt="Avatar de Nicolas Gomez">
+                  <p data-i18n="testimonials.4.quote">"Nos ayudaron a simplificar la operacion digital y a tomar decisiones mas rapidas con datos claros. El equipo trabaja con menos friccion."</p>
+                  <h3 data-i18n="testimonials.4.name">Nicolas Gomez</h3>
+                  <span data-i18n="testimonials.4.role">CEO · Decoracion</span>
+                </article>
+                <article class="ts-entry is-hidden-down" data-ts-entry="5" data-ts-avatar="https://nanaetben.fr/animation/assets/images/website/Nana-2.png" data-ts-avatar-alt="Avatar de Sofia Vega">
+                  <p data-i18n="testimonials.5.quote">"La hoja de ruta de 90 dias fue clave para recuperar foco. Dejamos de reaccionar y empezamos a construir crecimiento sostenido."</p>
+                  <h3 data-i18n="testimonials.5.name">Sofia Vega</h3>
+                  <span data-i18n="testimonials.5.role">Direccion general · Restauracion</span>
+                </article>
+                <article class="ts-entry is-hidden-down" data-ts-entry="6" data-ts-avatar="https://nanaetben.fr/animation/assets/images/website/Nana-3.png" data-ts-avatar-alt="Avatar de Jorge Beltran">
+                  <p data-i18n="testimonials.6.quote">"Lo mejor fue la implementacion: reuniones utiles, decisiones concretas y seguimiento real. Vimos impacto desde el primer mes."</p>
+                  <h3 data-i18n="testimonials.6.name">Jorge Beltran</h3>
+                  <span data-i18n="testimonials.6.role">Director de operaciones · B2B</span>
+                </article>
+              </div>
+            </article>
           </div>
         </div>
       </div>

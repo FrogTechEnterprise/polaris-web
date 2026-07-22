@@ -266,6 +266,614 @@
     }
   }
 
+  function setupBoatStarBurst() {
+    var lane = document.querySelector('.boat-lane');
+    var boat = document.querySelector('.boat');
+    if (!lane || !boat) {
+      return;
+    }
+
+    var palette = ['#ffd65d', '#8ed7ff', '#6aa8ff', '#ffffff', '#ffe89a'];
+    var cooldown = false;
+
+    function emitStarBurst() {
+      if (cooldown) {
+        return;
+      }
+
+      cooldown = true;
+      window.setTimeout(function () {
+        cooldown = false;
+      }, 220);
+
+      var boatRect = boat.getBoundingClientRect();
+      var laneRect = lane.getBoundingClientRect();
+      var originX = boatRect.left + boatRect.width / 2 - laneRect.left;
+      var originY = boatRect.top + boatRect.height / 2 - laneRect.top;
+      var count = 20;
+
+      for (var i = 0; i < count; i++) {
+        var star = document.createElement('span');
+        var angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.35;
+        var distance = 36 + Math.random() * 120;
+        var tx = Math.cos(angle) * distance;
+        var ty = Math.sin(angle) * distance - (16 + Math.random() * 24);
+        var duration = 680 + Math.random() * 420;
+        var size = 8 + Math.random() * 9;
+        var color = palette[Math.floor(Math.random() * palette.length)];
+        var rotation = (-210 + Math.random() * 420).toFixed(0) + 'deg';
+
+        star.className = 'boat-star';
+        star.style.left = originX + 'px';
+        star.style.top = originY + 'px';
+        star.style.setProperty('--star-tx', tx.toFixed(1) + 'px');
+        star.style.setProperty('--star-ty', ty.toFixed(1) + 'px');
+        star.style.setProperty('--star-duration', duration.toFixed(0) + 'ms');
+        star.style.setProperty('--star-size', size.toFixed(1) + 'px');
+        star.style.setProperty('--star-color', color);
+        star.style.setProperty('--star-rot', rotation);
+
+        star.addEventListener('animationend', function () {
+          this.remove();
+        });
+
+        lane.appendChild(star);
+      }
+    }
+
+    boat.addEventListener('click', emitStarBurst);
+    boat.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        emitStarBurst();
+      }
+    });
+  }
+
+  function setupServicesCarousel() {
+    var list = document.querySelector('.services-list');
+    if (!list) {
+      return;
+    }
+
+    var items = Array.prototype.slice.call(list.querySelectorAll('.service-item'));
+    if (items.length < 2) {
+      return;
+    }
+
+    var progress = 0;
+    var active = 0;
+    var isDown = false;
+    var startX = 0;
+    var SPEED_WHEEL = 0.03;
+    var SPEED_DRAG = -0.13;
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function computeZ(index) {
+      return Math.max(1, items.length - Math.round(Math.abs(active - index)));
+    }
+
+    function render() {
+      progress = clamp(progress, 0, 100);
+      active = (progress / 100) * (items.length - 1);
+
+      items.forEach(function (item, index) {
+        var relative = index - active;
+        item.style.setProperty('--items', String(items.length));
+        item.style.setProperty('--z-index', String(computeZ(index)));
+        item.style.setProperty('--active', relative.toFixed(4));
+      });
+    }
+
+    function moveToIndex(index) {
+      if (items.length <= 1) {
+        return;
+      }
+
+      progress = (index / (items.length - 1)) * 100;
+      render();
+    }
+
+    function onWheel(event) {
+      event.preventDefault();
+      progress += event.deltaY * SPEED_WHEEL;
+      render();
+    }
+
+    function onPointerDown(event) {
+      if (event.pointerType === 'mouse' && event.button !== 0) {
+        return;
+      }
+
+      isDown = true;
+      startX = event.clientX;
+      list.classList.add('is-dragging');
+    }
+
+    function onPointerMove(event) {
+      if (!isDown) {
+        return;
+      }
+
+      var delta = (event.clientX - startX) * SPEED_DRAG;
+      progress += delta;
+      startX = event.clientX;
+      render();
+    }
+
+    function onPointerUp() {
+      if (!isDown) {
+        return;
+      }
+
+      isDown = false;
+      list.classList.remove('is-dragging');
+    }
+
+    items.forEach(function (item, index) {
+      item.setAttribute('tabindex', '0');
+
+      item.addEventListener('click', function () {
+        moveToIndex(index);
+      });
+
+      item.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          moveToIndex(index);
+        }
+      });
+    });
+
+    list.addEventListener('wheel', onWheel, { passive: false });
+    list.addEventListener('pointerdown', onPointerDown);
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
+
+    render();
+  }
+
+  function setupTestimonialsScrollSection() {
+    var section = document.querySelector('[data-testimonials-scroll-section]');
+    var stage = document.querySelector('[data-testimonials-scroll-stage]');
+    var intro = section ? section.querySelector('.testimonials-scroll-intro') : null;
+    var scaler = document.querySelector('[data-ts-scaler]');
+    var scalerAvatar = scaler ? scaler.querySelector('.ts-scaler-avatar') : null;
+    var layers = document.querySelectorAll('[data-ts-layer]');
+    var floatingAvatars = section ? section.querySelectorAll('.ts-avatar[data-ts-target]') : [];
+    var entries = document.querySelectorAll('[data-ts-entry]');
+
+    if (!section || !stage || !intro || !scaler || !scalerAvatar || !layers.length || !entries.length) {
+      return;
+    }
+
+    var activeEntry = 1;
+    var manualMode = false;
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function easeOutCubic(value) {
+      return 1 - Math.pow(1 - value, 3);
+    }
+
+    function setEntry(id) {
+      activeEntry = id;
+
+      entries.forEach(function (entry) {
+        var entryId = Number(entry.getAttribute('data-ts-entry'));
+        entry.classList.remove('is-active', 'is-hidden-up', 'is-hidden-down');
+
+        if (entryId === activeEntry) {
+          entry.classList.add('is-active');
+        } else if (entryId < activeEntry) {
+          entry.classList.add('is-hidden-up');
+        } else {
+          entry.classList.add('is-hidden-down');
+        }
+      });
+
+      var activeEntryNode = section.querySelector('[data-ts-entry="' + activeEntry + '"]');
+      if (activeEntryNode) {
+        var avatarSrc = activeEntryNode.getAttribute('data-ts-avatar');
+        var avatarAlt = activeEntryNode.getAttribute('data-ts-avatar-alt');
+
+        if (avatarSrc) {
+          scalerAvatar.src = avatarSrc;
+        }
+
+        if (avatarAlt) {
+          scalerAvatar.alt = avatarAlt;
+        }
+      }
+
+      floatingAvatars.forEach(function (avatar) {
+        var target = Number(avatar.getAttribute('data-ts-target'));
+        avatar.classList.toggle('is-selected', target === activeEntry);
+      });
+    }
+
+    function updateTestimonialsScrollState() {
+      var rect = stage.getBoundingClientRect();
+      var travel = Math.max(1, rect.height - window.innerHeight);
+      var rawProgress = (-rect.top) / travel;
+      var progress = clamp(rawProgress, 0, 1);
+      var introOutStart = 0.08;
+      var introOutEnd = 0.26;
+      var cardInStart = 0.2;
+      var cardInEnd = 0.38;
+      var testimonialsStart = 0.3;
+      var manualStart = 0.88;
+
+      section.style.setProperty('--ts-progress', progress.toFixed(4));
+
+      var scalePhase = clamp(progress / 0.42, 0, 1);
+      var scalerScale = 2.6 - (1.6 * easeOutCubic(scalePhase));
+      scaler.style.transform = 'translate(-50%, -50%) scale(' + scalerScale.toFixed(4) + ')';
+
+      var introOut = clamp((progress - introOutStart) / (introOutEnd - introOutStart), 0, 1);
+      intro.style.opacity = (1 - introOut).toFixed(4);
+      intro.style.transform = 'translateX(-50%) translateY(' + (introOut * -18).toFixed(2) + 'px)';
+
+      var cardIn = clamp((progress - cardInStart) / (cardInEnd - cardInStart), 0, 1);
+      scaler.style.opacity = easeOutCubic(cardIn).toFixed(4);
+
+      layers.forEach(function (layer, index) {
+        var start = 0.06 + (index * 0.08);
+        var end = 0.46 + (index * 0.1);
+        var local = clamp((progress - start) / (end - start), 0, 1);
+        var localEase = easeOutCubic(local);
+
+        layer.style.opacity = localEase.toFixed(4);
+        layer.style.transform = 'scale(' + (0.45 + localEase * 0.55).toFixed(4) + ') translateY(' + ((1 - localEase) * 28).toFixed(2) + 'px)';
+      });
+
+      var entryProgress = clamp((progress - testimonialsStart) / (1 - testimonialsStart), 0, 1);
+      var nextEntry = Math.min(entries.length, Math.max(1, Math.floor(entryProgress * entries.length) + 1));
+
+      if (progress < manualStart) {
+        manualMode = false;
+        setEntry(nextEntry);
+      } else if (!manualMode) {
+        setEntry(nextEntry);
+      }
+    }
+
+    floatingAvatars.forEach(function (avatar) {
+      avatar.addEventListener('click', function () {
+        var rect = stage.getBoundingClientRect();
+        var travel = Math.max(1, rect.height - window.innerHeight);
+        var progress = clamp((-rect.top) / travel, 0, 1);
+
+        if (progress < 0.88) {
+          return;
+        }
+
+        var target = Number(avatar.getAttribute('data-ts-target'));
+        if (!target) {
+          return;
+        }
+
+        manualMode = true;
+        setEntry(target);
+      });
+    });
+
+    window.addEventListener('scroll', updateTestimonialsScrollState, { passive: true });
+    window.addEventListener('resize', updateTestimonialsScrollState);
+    updateTestimonialsScrollState();
+  }
+
+  function setupAboutImageRevealCanvas() {
+    var aboutImage = document.querySelector('.about-image');
+    var canvas = document.querySelector('[data-about-reveal-canvas]');
+    if (!aboutImage || !canvas) {
+      return;
+    }
+
+    var ctx = canvas.getContext('2d');
+    if (!ctx) {
+      return;
+    }
+
+    var WORD = ['START NOW', 'WITH US'];
+    var WALL = 'rgb(243,243,239)';
+    var CELL = 18;
+    var R = 160;
+    var PUSH = 200;
+    var CLEAR = 0.5;
+    var EASE = 0.09;
+    var DECAY = 0.988;
+
+    var width = 0;
+    var height = 0;
+    var cols = 0;
+    var rows = 0;
+    var dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+    var frameId = null;
+    var wordCanvas = null;
+    var coverCanvas = null;
+    var coverImage = null;
+    var revealStrength = 0;
+    var revealTarget = 0;
+    var idleTimer = null;
+
+    var mouse = {
+      x: -9999,
+      y: -9999,
+      sx: -9999,
+      sy: -9999,
+      active: false
+    };
+
+    var rev;
+    var tox;
+    var toy;
+    var ox;
+    var oy;
+
+    function buildGrid() {
+      var n = cols * rows;
+      rev = new Float32Array(n);
+      tox = new Float32Array(n);
+      toy = new Float32Array(n);
+      ox = new Float32Array(n);
+      oy = new Float32Array(n);
+    }
+
+    function buildWord() {
+      wordCanvas = document.createElement('canvas');
+      wordCanvas.width = width;
+      wordCanvas.height = height;
+      var w = wordCanvas.getContext('2d');
+
+      var size = Math.min(height * 0.28, width * 0.16);
+      w.textAlign = 'center';
+      w.textBaseline = 'middle';
+      w.font = '700 ' + size + 'px "Manrope", sans-serif';
+
+      var widest = 0;
+      WORD.forEach(function (line) {
+        var lineWidth = w.measureText(line).width;
+        if (lineWidth > widest) {
+          widest = lineWidth;
+        }
+      });
+
+      if (widest > width * 0.84) {
+        size *= (width * 0.84) / widest;
+      }
+
+      w.font = '700 ' + size + 'px "Manrope", sans-serif';
+
+      var gradient = w.createLinearGradient(width * 0.16, 0, width * 0.84, 0);
+      gradient.addColorStop(0, '#2f67ff');
+      gradient.addColorStop(0.5, '#17a8ff');
+      gradient.addColorStop(1, '#f3be2b');
+      w.fillStyle = gradient;
+
+      var lineHeight = size * 1.04;
+      var y0 = height * 0.5 - ((WORD.length - 1) * lineHeight) / 2;
+      WORD.forEach(function (line, i) {
+        w.fillText(line, width / 2, y0 + i * lineHeight);
+      });
+    }
+
+    function drawCoverImageToCanvas(targetCtx) {
+      if (!coverImage || !coverImage.complete) {
+        targetCtx.fillStyle = '#dfe7f2';
+        targetCtx.fillRect(0, 0, width, height);
+        return;
+      }
+
+      var iw = coverImage.naturalWidth || coverImage.width;
+      var ih = coverImage.naturalHeight || coverImage.height;
+      if (!iw || !ih) {
+        targetCtx.fillStyle = '#dfe7f2';
+        targetCtx.fillRect(0, 0, width, height);
+        return;
+      }
+
+      var scale = Math.max(width / iw, height / ih);
+      var dw = iw * scale;
+      var dh = ih * scale;
+      var dx = (width - dw) / 2;
+      var dy = (height - dh) / 2;
+
+      targetCtx.drawImage(coverImage, dx, dy, dw, dh);
+      targetCtx.fillStyle = 'rgba(16, 39, 72, 0.2)';
+      targetCtx.fillRect(0, 0, width, height);
+    }
+
+    function buildCover() {
+      coverCanvas = document.createElement('canvas');
+      coverCanvas.width = width;
+      coverCanvas.height = height;
+      var c = coverCanvas.getContext('2d');
+      drawCoverImageToCanvas(c);
+    }
+
+    function draw() {
+      revealStrength += (revealTarget - revealStrength) * 0.12;
+
+      if (mouse.active) {
+        mouse.sx += (mouse.x - mouse.sx) * 0.25;
+        mouse.sy += (mouse.y - mouse.sy) * 0.25;
+      }
+
+      if (revealStrength <= 0.02) {
+        ctx.clearRect(0, 0, width, height);
+        frameId = window.requestAnimationFrame(draw);
+        return;
+      }
+
+      ctx.clearRect(0, 0, width, height);
+
+      if (!wordCanvas) {
+        frameId = window.requestAnimationFrame(draw);
+        return;
+      }
+
+      if (!coverCanvas) {
+        frameId = window.requestAnimationFrame(draw);
+        return;
+      }
+
+      // The word remains fixed; only the pixel wall moves to reveal it.
+      ctx.fillStyle = WALL;
+      ctx.globalAlpha = Math.min(1, revealStrength);
+      ctx.fillRect(0, 0, width, height);
+      ctx.drawImage(wordCanvas, 0, 0);
+
+      var mx = mouse.sx;
+      var my = mouse.sy;
+      var active = mouse.active;
+
+      for (var r = 0; r < rows; r++) {
+        for (var c = 0; c < cols; c++) {
+          var i = r * cols + c;
+          var hx = c * CELL;
+          var hy = r * CELL;
+          var inf = 0;
+
+          if (active) {
+            var dx = hx + CELL * 0.5 - mx;
+            var dy = hy + CELL * 0.5 - my;
+            var d2 = dx * dx + dy * dy;
+
+            if (d2 < R * R && d2 > 0.001) {
+              var d = Math.sqrt(d2);
+              var p = 1 - d / R;
+              inf = Math.min(1, p * CLEAR);
+
+              if (inf > rev[i]) {
+                var mag = PUSH * p * p;
+                tox[i] = dx / d * mag;
+                toy[i] = dy / d * mag;
+              }
+            }
+          }
+
+          var rv = rev[i] * DECAY;
+          if (inf > rv) {
+            rv = inf;
+          }
+          rev[i] = rv;
+
+          ox[i] += (tox[i] * rv - ox[i]) * EASE;
+          oy[i] += (toy[i] * rv - oy[i]) * EASE;
+
+          var dxp = hx + ox[i];
+          var dyp = hy + oy[i];
+
+          ctx.globalAlpha = Math.min(1, 0.95 * revealStrength);
+          ctx.drawImage(coverCanvas, hx, hy, CELL, CELL, dxp, dyp, CELL, CELL);
+
+          if (rv > 0.08) {
+            ctx.globalAlpha = Math.min(0.55, rv * revealStrength * 0.85);
+            ctx.strokeStyle = 'rgba(15, 28, 52, 0.22)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(dxp + 0.5, dyp + 0.5, CELL - 1, CELL - 1);
+          }
+        }
+      }
+
+      ctx.globalAlpha = 1;
+
+      frameId = window.requestAnimationFrame(draw);
+    }
+
+    function resize() {
+      dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+      width = Math.max(1, Math.floor(aboutImage.clientWidth));
+      height = Math.max(1, Math.floor(aboutImage.clientHeight));
+
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      cols = Math.ceil(width / CELL) + 1;
+      rows = Math.ceil(height / CELL) + 1;
+
+      buildGrid();
+      buildWord();
+      buildCover();
+    }
+
+    function onPointerMove(event) {
+      var rect = aboutImage.getBoundingClientRect();
+      var x = event.clientX - rect.left;
+      var y = event.clientY - rect.top;
+
+      if (!mouse.active) {
+        mouse.sx = x;
+        mouse.sy = y;
+      }
+
+      mouse.x = x;
+      mouse.y = y;
+      mouse.active = true;
+      revealTarget = 1;
+      aboutImage.classList.add('is-reveal-active');
+
+      if (idleTimer) {
+        window.clearTimeout(idleTimer);
+      }
+
+      idleTimer = window.setTimeout(function () {
+        revealTarget = 0;
+        aboutImage.classList.remove('is-reveal-active');
+        mouse.active = false;
+      }, 520);
+    }
+
+    function onPointerLeave() {
+      mouse.active = false;
+      revealTarget = 0;
+      aboutImage.classList.remove('is-reveal-active');
+
+      if (idleTimer) {
+        window.clearTimeout(idleTimer);
+        idleTimer = null;
+      }
+    }
+
+    aboutImage.addEventListener('pointermove', onPointerMove);
+    aboutImage.addEventListener('pointerleave', onPointerLeave);
+    window.addEventListener('resize', resize);
+
+    coverImage = new Image();
+    coverImage.src = 'assets/images/hero-placeholder.jpg';
+    coverImage.addEventListener('load', function () {
+      buildCover();
+    });
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () {
+        buildWord();
+        buildCover();
+      });
+    }
+
+    resize();
+    draw();
+
+    window.addEventListener('beforeunload', function () {
+      if (frameId) {
+        window.cancelAnimationFrame(frameId);
+      }
+
+      if (idleTimer) {
+        window.clearTimeout(idleTimer);
+      }
+    });
+  }
+
   if (menuToggle && menu) {
     menuToggle.addEventListener('click', toggleMenu);
     window.addEventListener('resize', closeMenuOnResize);
@@ -294,4 +902,8 @@
   setActiveNav();
   setupContactForm();
   setupScrollEffects();
+  setupBoatStarBurst();
+  setupServicesCarousel();
+  setupTestimonialsScrollSection();
+  setupAboutImageRevealCanvas();
 }());
