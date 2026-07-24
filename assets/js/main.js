@@ -269,12 +269,90 @@
   function setupBoatStarBurst() {
     var lane = document.querySelector('.boat-lane');
     var boat = document.querySelector('.boat');
-    if (!lane || !boat) {
+    var leaderStar = lane ? lane.querySelector('.boat-leader-star') : null;
+    if (!lane || !boat || !leaderStar) {
       return;
     }
 
     var palette = ['#ffd65d', '#8ed7ff', '#6aa8ff', '#ffffff', '#ffe89a'];
     var cooldown = false;
+    var rafId = null;
+    var lastTs = 0;
+    var drift = 0;
+    var direction = 1;
+    var laneWidth = 0;
+    var laneHeight = 0;
+    var starX = 0;
+    var starY = 0;
+    var boatX = 0;
+    var boatY = 0;
+    var followDistance = 128;
+    var starBaseYRatio = 0.79;
+    var boatBaseYRatio = 0.91;
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function measureLane() {
+      var rect = lane.getBoundingClientRect();
+      laneWidth = Math.max(280, rect.width);
+      laneHeight = Math.max(120, rect.height);
+
+      if (!starX) {
+        starX = laneWidth * 0.22;
+        starY = laneHeight * starBaseYRatio;
+        boatX = starX - followDistance;
+        boatY = laneHeight * boatBaseYRatio;
+      } else {
+        starX = clamp(starX, 14, laneWidth - 14);
+        boatX = clamp(boatX, -120, laneWidth + 120);
+        boatY = clamp(boatY, laneHeight * 0.86, laneHeight * 0.95);
+      }
+    }
+
+    function animateChase(ts) {
+      if (!lastTs) {
+        lastTs = ts;
+      }
+
+      var dt = Math.min(0.04, (ts - lastTs) / 1000);
+      lastTs = ts;
+      drift += dt;
+
+      var speed = 92;
+      starX += direction * speed * dt;
+
+      if (starX > laneWidth - 12) {
+        starX = laneWidth - 12;
+        direction = -1;
+      }
+
+      if (starX < 12) {
+        starX = 12;
+        direction = 1;
+      }
+
+      var progress = starX / laneWidth;
+      var wave = Math.sin(progress * Math.PI * 4 + drift * 4.1) * 10;
+      var microWave = Math.sin(drift * 7.8) * 2;
+      starY = laneHeight * starBaseYRatio + wave + microWave;
+
+      var targetBoatX = starX - (direction * followDistance);
+      var lowWave = Math.sin(drift * 2.1 + (progress * Math.PI * 2.4)) * 2.2;
+      var targetBoatY = laneHeight * boatBaseYRatio + lowWave;
+
+      boatX += (targetBoatX - boatX) * 0.12;
+      boatY += (targetBoatY - boatY) * 0.07;
+
+      var tilt = clamp((targetBoatX - boatX) * 0.05 + (targetBoatY - boatY) * 0.35 + direction * 1.2, -5.5, 5.5);
+      var starRotation = drift * 220;
+
+      leaderStar.style.transform = 'translate(' + starX.toFixed(1) + 'px, ' + starY.toFixed(1) + 'px) rotate(' + starRotation.toFixed(1) + 'deg)';
+      boat.style.transform = 'translate(' + boatX.toFixed(1) + 'px, ' + boatY.toFixed(1) + 'px) rotate(' + tilt.toFixed(2) + 'deg)';
+
+      rafId = window.requestAnimationFrame(animateChase);
+    }
 
     function emitStarBurst() {
       if (cooldown) {
@@ -321,12 +399,25 @@
       }
     }
 
+    measureLane();
+    rafId = window.requestAnimationFrame(animateChase);
+
+    window.addEventListener('resize', measureLane);
+
     boat.addEventListener('click', emitStarBurst);
     boat.addEventListener('keydown', function (event) {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         emitStarBurst();
       }
+    });
+
+    window.addEventListener('beforeunload', function () {
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+      }
+
+      window.removeEventListener('resize', measureLane);
     });
   }
 
@@ -345,6 +436,11 @@
     var active = 0;
     var isDown = false;
     var startX = 0;
+    var activePointerId = null;
+    var isInteractive = false;
+    var hasAutoPlayed = false;
+    var autoFrameId = null;
+    var autoplayDuration = 2100;
     var SPEED_WHEEL = 0.03;
     var SPEED_DRAG = -0.13;
 
@@ -354,6 +450,14 @@
 
     function computeZ(index) {
       return Math.max(1, items.length - Math.round(Math.abs(active - index)));
+    }
+
+    function easeInOutCubic(value) {
+      if (value < 0.5) {
+        return 4 * value * value * value;
+      }
+
+      return 1 - Math.pow(-2 * value + 2, 3) / 2;
     }
 
     function render() {
@@ -378,39 +482,128 @@
     }
 
     function onWheel(event) {
+      if (!isInteractive) {
+        return;
+      }
+
       event.preventDefault();
-      progress += event.deltaY * SPEED_WHEEL;
+      // Trackpads often emit horizontal deltaX, while mouse wheels usually emit deltaY.
+      var axisDelta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+      progress += axisDelta * SPEED_WHEEL;
       render();
     }
 
     function onPointerDown(event) {
+      if (!isInteractive) {
+        return;
+      }
+
       if (event.pointerType === 'mouse' && event.button !== 0) {
         return;
       }
 
       isDown = true;
       startX = event.clientX;
+      activePointerId = event.pointerId;
+      if (typeof list.setPointerCapture === 'function') {
+        try {
+          list.setPointerCapture(activePointerId);
+        } catch (error) {
+          /* ignore capture failures */
+        }
+      }
       list.classList.add('is-dragging');
     }
 
     function onPointerMove(event) {
-      if (!isDown) {
+      if (!isDown || (activePointerId !== null && event.pointerId !== activePointerId)) {
         return;
       }
 
+      event.preventDefault();
       var delta = (event.clientX - startX) * SPEED_DRAG;
       progress += delta;
       startX = event.clientX;
       render();
     }
 
-    function onPointerUp() {
+    function onPointerUp(event) {
+      if (!isDown || (event && activePointerId !== null && event.pointerId !== activePointerId)) {
+        return;
+      }
+
+      if (activePointerId !== null && typeof list.releasePointerCapture === 'function') {
+        try {
+          list.releasePointerCapture(activePointerId);
+        } catch (error) {
+          /* ignore release failures */
+        }
+      }
+
+      activePointerId = null;
+      isDown = false;
+      list.classList.remove('is-dragging');
+    }
+
+    function onTouchMove(event) {
       if (!isDown) {
         return;
       }
 
-      isDown = false;
-      list.classList.remove('is-dragging');
+      event.preventDefault();
+    }
+
+    function onListKeydown(event) {
+      if (!isInteractive) {
+        return;
+      }
+
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        progress += 8;
+        render();
+      }
+
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        progress -= 8;
+        render();
+      }
+    }
+
+    function runIntroAutoplay() {
+      if (hasAutoPlayed) {
+        return;
+      }
+
+      hasAutoPlayed = true;
+      isInteractive = false;
+      // Start from the opposite edge so the intro sweep reads left-to-right.
+      progress = 100;
+      render();
+
+      var startTime = 0;
+
+      function step(timestamp) {
+        if (!startTime) {
+          startTime = timestamp;
+        }
+
+        var elapsed = timestamp - startTime;
+        var t = clamp(elapsed / autoplayDuration, 0, 1);
+        progress = (1 - easeInOutCubic(t)) * 100;
+        render();
+
+        if (t < 1) {
+          autoFrameId = window.requestAnimationFrame(step);
+          return;
+        }
+
+        autoFrameId = null;
+        isInteractive = true;
+      }
+
+      autoFrameId = window.requestAnimationFrame(step);
     }
 
     items.forEach(function (item, index) {
@@ -428,13 +621,50 @@
       });
     });
 
+    list.setAttribute('tabindex', '0');
+    list.addEventListener('keydown', onListKeydown);
     list.addEventListener('wheel', onWheel, { passive: false });
     list.addEventListener('pointerdown', onPointerDown);
     window.addEventListener('pointermove', onPointerMove);
     window.addEventListener('pointerup', onPointerUp);
     window.addEventListener('pointercancel', onPointerUp);
+    list.addEventListener('touchmove', onTouchMove, { passive: false });
 
     render();
+
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      isInteractive = true;
+      return;
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      runIntroAutoplay();
+      return;
+    }
+
+    var observer = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.15) {
+            runIntroAutoplay();
+            observer.disconnect();
+          }
+        });
+      },
+      {
+        threshold: [0.15]
+      }
+    );
+
+    observer.observe(list);
+
+    window.addEventListener('beforeunload', function () {
+      if (autoFrameId) {
+        window.cancelAnimationFrame(autoFrameId);
+      }
+
+      observer.disconnect();
+    });
   }
 
   function setupTestimonialsScrollSection() {
@@ -503,16 +733,16 @@
       var travel = Math.max(1, rect.height - window.innerHeight);
       var rawProgress = (-rect.top) / travel;
       var progress = clamp(rawProgress, 0, 1);
-      var introOutStart = 0.08;
-      var introOutEnd = 0.26;
-      var cardInStart = 0.2;
-      var cardInEnd = 0.38;
-      var testimonialsStart = 0.3;
+      var introOutStart = 0.01;
+      var introOutEnd = 0.12;
+      var cardInStart = 0.02;
+      var cardInEnd = 0.15;
+      var testimonialsStart = 0.08;
       var manualStart = 0.88;
 
       section.style.setProperty('--ts-progress', progress.toFixed(4));
 
-      var scalePhase = clamp(progress / 0.42, 0, 1);
+      var scalePhase = clamp(progress / 0.26, 0, 1);
       var scalerScale = 2.6 - (1.6 * easeOutCubic(scalePhase));
       scaler.style.transform = 'translate(-50%, -50%) scale(' + scalerScale.toFixed(4) + ')';
 
@@ -524,8 +754,8 @@
       scaler.style.opacity = easeOutCubic(cardIn).toFixed(4);
 
       layers.forEach(function (layer, index) {
-        var start = 0.06 + (index * 0.08);
-        var end = 0.46 + (index * 0.1);
+        var start = index * 0.045;
+        var end = 0.24 + (index * 0.085);
         var local = clamp((progress - start) / (end - start), 0, 1);
         var localEase = easeOutCubic(local);
 
