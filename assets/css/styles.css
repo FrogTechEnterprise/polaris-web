@@ -29,12 +29,21 @@ html,
 body {
   margin: 0;
   padding: 0;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 html {
   scroll-behavior: smooth;
   scrollbar-color: rgba(42, 103, 169, 0.72) #e7edf5;
   scrollbar-width: thin;
+}
+
+@supports (overflow: clip) {
+  html,
+  body {
+    overflow-x: clip;
+  }
 }
 
 body {
