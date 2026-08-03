@@ -672,12 +672,11 @@
     var stage = document.querySelector('[data-testimonials-scroll-stage]');
     var intro = section ? section.querySelector('.testimonials-scroll-intro') : null;
     var scaler = document.querySelector('[data-ts-scaler]');
-    var scalerAvatar = scaler ? scaler.querySelector('.ts-scaler-avatar') : null;
     var layers = document.querySelectorAll('[data-ts-layer]');
     var floatingAvatars = section ? section.querySelectorAll('.ts-avatar[data-ts-target]') : [];
     var entries = document.querySelectorAll('[data-ts-entry]');
 
-    if (!section || !stage || !intro || !scaler || !scalerAvatar || !layers.length || !entries.length) {
+    if (!section || !stage || !intro || !scaler || !layers.length || !entries.length) {
       return;
     }
 
@@ -707,20 +706,6 @@
           entry.classList.add('is-hidden-down');
         }
       });
-
-      var activeEntryNode = section.querySelector('[data-ts-entry="' + activeEntry + '"]');
-      if (activeEntryNode) {
-        var avatarSrc = activeEntryNode.getAttribute('data-ts-avatar');
-        var avatarAlt = activeEntryNode.getAttribute('data-ts-avatar-alt');
-
-        if (avatarSrc) {
-          scalerAvatar.src = avatarSrc;
-        }
-
-        if (avatarAlt) {
-          scalerAvatar.alt = avatarAlt;
-        }
-      }
 
       floatingAvatars.forEach(function (avatar) {
         var target = Number(avatar.getAttribute('data-ts-target'));

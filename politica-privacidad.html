@@ -13,17 +13,30 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
-<body class="legal-body">
+<body class="legal-body" data-legal-page="privacy">
   <header class="site-header">
     <div class="container nav-wrap">
       <a class="brand" href="index.html#inicio" aria-label="Ir al inicio">
         <img class="brand-logo" src="assets/images/logo_polaris.jpg" alt="Logo de Polaris Marketing" width="44" height="44" decoding="async">
         <span class="brand-copy">
           <strong>Polaris Marketing</strong>
-          <small>Estrategia · Marketing · Digital</small>
+          <small data-legal-brand>Estrategia Â· Marketing Â· Digital</small>
         </span>
       </a>
-      <a class="btn btn-primary" href="index.html#contacto">Volver al contacto</a>
+            <div class="nav-actions">
+        <div class="lang-switch" data-lang-switch>
+          <button type="button" class="lang-current" data-lang-toggle aria-haspopup="true" aria-expanded="false" aria-label="Selecciona idioma">
+            <span data-lang-current-label>ES</span>
+          </button>
+          <ul class="lang-options" data-lang-options role="menu">
+            <li role="none"><button type="button" role="menuitem" data-lang-option="es">Espa&ntilde;ol</button></li>
+            <li role="none"><button type="button" role="menuitem" data-lang-option="en">English</button></li>
+            <li role="none"><button type="button" role="menuitem" data-lang-option="pt">Portugu&ecirc;s</button></li>
+            <li role="none"><button type="button" role="menuitem" data-lang-option="fr">Fran&ccedil;ais</button></li>
+          </ul>
+        </div>
+        <a class="btn btn-primary" href="index.html#contacto" data-legal-contact>Volver al contacto</a>
+      </div>
     </div>
   </header>
 
@@ -82,10 +95,11 @@
         <p>Podemos actualizar esta politica para adaptarla a novedades legales o mejoras del servicio. Recomendamos revisarla periodicamente.</p>
       </section>
 
-      <a class="legal-back" href="index.html">Volver a la pagina principal</a>
+      <a class="legal-back" href="index.html" data-legal-home>Volver a la pagina principal</a>
     </article>
   </main>
 
+  <script src="assets/js/legal-i18n.js"></script>
   <script src="assets/js/main.js"></script>
 </body>
 </html>
