@@ -16,12 +16,62 @@
   var backToTop = document.querySelector('[data-back-to-top]');
   var methodTimeline = document.querySelector('.method-timeline');
   var timelineSteps = methodTimeline ? methodTimeline.querySelectorAll('.timeline-step') : [];
+  var lockedScrollY = 0;
+
+  function lockBodyScroll() {
+    if (window.innerWidth > 900) {
+      return;
+    }
+
+    lockedScrollY = window.scrollY || window.pageYOffset || 0;
+    body.style.position = 'fixed';
+    body.style.top = '-' + lockedScrollY + 'px';
+    body.style.left = '0';
+    body.style.right = '0';
+    body.style.width = '100%';
+  }
+
+  function unlockBodyScroll() {
+    if (window.innerWidth > 900) {
+      body.style.position = '';
+      body.style.top = '';
+      body.style.left = '';
+      body.style.right = '';
+      body.style.width = '';
+      return;
+    }
+
+    var y = Math.abs(parseInt(body.style.top || '0', 10));
+    var targetY = y || lockedScrollY || 0;
+    var root = document.documentElement;
+    var prevScrollBehavior = root.style.scrollBehavior;
+
+    body.style.position = '';
+    body.style.top = '';
+    body.style.left = '';
+    body.style.right = '';
+    body.style.width = '';
+
+    // Avoid smooth-scroll animation jump when releasing body lock.
+    root.style.scrollBehavior = 'auto';
+    window.scrollTo(0, targetY);
+
+    window.requestAnimationFrame(function () {
+      root.style.scrollBehavior = prevScrollBehavior;
+    });
+  }
 
   function toggleMenu() {
     var expanded = menuToggle.getAttribute('aria-expanded') === 'true';
     menuToggle.setAttribute('aria-expanded', String(!expanded));
     menu.classList.toggle('is-open');
     body.classList.toggle('menu-open');
+
+    if (expanded) {
+      unlockBodyScroll();
+    } else {
+      lockBodyScroll();
+    }
   }
 
   function closeMenu() {
@@ -32,6 +82,7 @@
     menu.classList.remove('is-open');
     body.classList.remove('menu-open');
     menuToggle.setAttribute('aria-expanded', 'false');
+    unlockBodyScroll();
   }
 
   function closeMenuOnResize() {

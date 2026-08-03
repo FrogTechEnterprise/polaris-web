@@ -2182,10 +2182,6 @@ img {
     visibility: visible;
   }
 
-  body.menu-open {
-    overflow: hidden;
-  }
-
   .contact-actions .btn {
     min-width: 0;
     width: 100%;
