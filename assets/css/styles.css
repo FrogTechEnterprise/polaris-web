@@ -319,7 +319,8 @@ img {
   margin-top: 2px;
 }
 
-.lang-options button {
+.lang-options button,
+.lang-options a {
   display: block;
   width: 100%;
   padding: 9px 12px;
@@ -335,12 +336,15 @@ img {
 }
 
 .lang-options button:hover,
-.lang-options button:focus-visible {
+.lang-options button:focus-visible,
+.lang-options a:hover,
+.lang-options a:focus-visible {
   background: #f3f7fd;
   color: var(--brand-700);
 }
 
-.lang-options button.is-active {
+.lang-options button.is-active,
+.lang-options a.is-active {
   color: var(--brand-700);
   font-weight: 700;
   background: rgba(52, 108, 191, 0.1);
@@ -908,6 +912,35 @@ img {
 
 .services-list.is-dragging {
   cursor: grabbing;
+}
+
+.service-seo-links {
+  margin-top: 32px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.service-seo-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(24, 73, 131, 0.2);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--brand-700);
+  font-size: 0.92rem;
+  font-weight: 700;
+  box-shadow: 0 8px 18px rgba(16, 37, 68, 0.07);
+  transition: transform var(--ease), border-color var(--ease), box-shadow var(--ease);
+}
+
+.service-seo-links a:hover,
+.service-seo-links a:focus-visible {
+  border-color: rgba(24, 73, 131, 0.36);
+  box-shadow: 0 12px 26px rgba(16, 37, 68, 0.12);
+  transform: translateY(-2px);
 }
 
 .service-item {

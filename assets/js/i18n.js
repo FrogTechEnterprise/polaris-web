@@ -7,8 +7,8 @@
 
   var DICT = {
     es: {
-      'meta.title': 'Polaris Marketing | Estrategia, Marketing y DigitalizaciÃ³n',
-      'meta.description': 'Polaris Marketing. Estrategia, marketing y digitalizaciÃ³n para crecer con foco, claridad y resultados medibles.',
+      'meta.title': 'Polaris Marketing | Estrategia comercial, marketing y digitalizacion para pymes',
+      'meta.description': 'Consultoria de estrategia comercial, marketing y digitalizacion para pymes y autonomos. Te ayudamos a ordenar prioridades, captar clientes y crecer con foco.',
       'a11y.skipLink': 'Saltar al contenido principal',
       'a11y.goHome': 'Ir al inicio',
       'brand.logoAlt': 'Logo de Polaris Marketing',
@@ -146,8 +146,8 @@
       'testimonials.6.lang': 'EspaÃ±ol'
     },
     en: {
-      'meta.title': 'Polaris Marketing | Strategy, Marketing and Digitalization',
-      'meta.description': 'Polaris Marketing. Strategy, marketing and digitalization to grow with focus, clarity and measurable results.',
+      'meta.title': 'Polaris Marketing | Strategy, marketing and digitalization for SMEs',
+      'meta.description': 'Business strategy, marketing and digitalization consulting for SMEs and growing businesses that need clearer priorities and measurable growth.',
       'a11y.skipLink': 'Skip to main content',
       'a11y.goHome': 'Go to homepage',
       'brand.logoAlt': 'Polaris Marketing logo',
@@ -285,8 +285,8 @@
       'testimonials.6.lang': 'English'
     },
     pt: {
-      'meta.title': 'Polaris Marketing | Estrategia, Marketing e Digitalizacao',
-      'meta.description': 'Polaris Marketing. Estrategia, marketing e digitalizacao para crescer com foco, clareza e resultados mensuraveis.',
+      'meta.title': 'Polaris Marketing | Estratégia, marketing e digitalização para PMEs',
+      'meta.description': 'Consultoria de estratégia comercial, marketing e digitalização para PMEs e negócios em crescimento que precisam de foco e resultados mensuráveis.',
       'a11y.skipLink': 'Saltar para o conteudo principal',
       'a11y.goHome': 'Ir para o inicio',
       'brand.logoAlt': 'Logotipo da Polaris Marketing',
@@ -424,8 +424,8 @@
       'testimonials.6.lang': 'PortuguÃªs'
     },
     fr: {
-      'meta.title': 'Polaris Marketing | Strategie, Marketing et Digitalisation',
-      'meta.description': 'Polaris Marketing. Strategie, marketing et digitalisation pour grandir avec concentration, clarte et resultats mesurables.',
+      'meta.title': 'Polaris Marketing | Stratégie, marketing et digitalisation pour PME',
+      'meta.description': 'Conseil en stratégie commerciale, marketing et digitalisation pour PME et entreprises en croissance qui veulent prioriser et grandir avec clarté.',
       'a11y.skipLink': 'Aller au contenu principal',
       'a11y.goHome': "Aller a l'accueil",
       'brand.logoAlt': 'Logo de Polaris Marketing',

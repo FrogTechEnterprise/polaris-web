@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://polarismarketing.es/sitemap.xml
