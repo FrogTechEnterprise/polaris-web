@@ -247,9 +247,38 @@
           submitButton.textContent = 'Enviando...';
         }
 
+        var nameField = contactForm.querySelector('[name="name"]');
+        var emailField = contactForm.querySelector('[name="email"]');
+        var messageField = contactForm.querySelector('[name="message"]');
+        var privacyField = contactForm.querySelector('[name="privacy"]');
+        var name = nameField ? nameField.value.trim() : '';
+        var email = emailField ? emailField.value.trim() : '';
+        var message = messageField ? messageField.value.trim() : '';
+        var privacyAccepted = privacyField ? (privacyField.checked ? 'Si' : 'No') : 'No';
+
+        var composedMessage = [
+          'Nuevo mensaje desde polarismarketing.es',
+          '',
+          'Nombre: ' + name,
+          'Email: ' + email,
+          '',
+          'Mensaje:',
+          message,
+          '',
+          'Acepta privacidad: ' + privacyAccepted
+        ].join('\n');
+
+        var payload = new FormData();
+        payload.append('_subject', 'Nuevo mensaje desde polarismarketing.es');
+        payload.append('_captcha', 'false');
+        if (email) {
+          payload.append('_replyto', email);
+        }
+        payload.append('mensaje', composedMessage);
+
         var response = await fetch(contactForm.action, {
           method: 'POST',
-          body: new FormData(contactForm),
+          body: payload,
           headers: {
             Accept: 'application/json'
           }
