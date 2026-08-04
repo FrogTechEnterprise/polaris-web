@@ -225,11 +225,14 @@
       return;
     }
 
-    contactForm.addEventListener('submit', function () {
-      feedback.textContent = (window.i18n && window.i18n.t('contacto.form.feedbackSuccess')) ||
-        'Gracias. Se abrira tu gestor de correo para completar el envio.';
+    contactForm.addEventListener('input', function () {
+      if (!feedback.textContent) {
+        return;
+      }
+
+      feedback.textContent = '';
       feedback.classList.remove('error');
-      feedback.classList.add('success');
+      feedback.classList.remove('success');
     });
   }
 
