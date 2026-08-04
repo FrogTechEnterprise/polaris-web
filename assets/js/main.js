@@ -225,14 +225,6 @@
       return;
     }
 
-    var EMAILJS_SERVICE_ID = 'service_moszoy6';
-    var EMAILJS_TEMPLATE_ID = 'template_w8dbulo';
-    var EMAILJS_PUBLIC_KEY = '88JGJZNLW2YF5hlU1';
-
-    if (window.emailjs && typeof window.emailjs.init === 'function') {
-      window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-    }
-
     contactForm.addEventListener('input', function () {
       if (!feedback.textContent) {
         return;
@@ -243,29 +235,45 @@
       feedback.classList.remove('success');
     });
 
-    contactForm.addEventListener('submit', function (event) {
+    contactForm.addEventListener('submit', async function (event) {
       event.preventDefault();
 
-      if (!window.emailjs || typeof window.emailjs.sendForm !== 'function') {
+      var submitButton = contactForm.querySelector('button[type="submit"]');
+      var originalLabel = submitButton ? submitButton.textContent : '';
+
+      try {
+        if (submitButton) {
+          submitButton.disabled = true;
+          submitButton.textContent = 'Enviando...';
+        }
+
+        var response = await fetch(contactForm.action, {
+          method: 'POST',
+          body: new FormData(contactForm),
+          headers: {
+            Accept: 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('FormSubmit request failed');
+        }
+
+        feedback.textContent = (window.i18n && window.i18n.t('contacto.form.feedbackSuccess')) ||
+          'Gracias. Tu mensaje se ha enviado correctamente.';
+        feedback.classList.remove('error');
+        feedback.classList.add('success');
+        contactForm.reset();
+      } catch (error) {
         feedback.textContent = 'No se pudo enviar el mensaje en este momento. Intentalo de nuevo.';
         feedback.classList.remove('success');
         feedback.classList.add('error');
-        return;
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = originalLabel;
+        }
       }
-
-      window.emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, contactForm)
-        .then(function () {
-          feedback.textContent = (window.i18n && window.i18n.t('contacto.form.feedbackSuccess')) ||
-            'Gracias. Tu mensaje se ha enviado correctamente.';
-          feedback.classList.remove('error');
-          feedback.classList.add('success');
-          contactForm.reset();
-        })
-        .catch(function () {
-          feedback.textContent = 'No se pudo enviar el mensaje en este momento. Intentalo de nuevo.';
-          feedback.classList.remove('success');
-          feedback.classList.add('error');
-        });
     });
   }
 
