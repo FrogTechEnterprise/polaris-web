@@ -225,6 +225,14 @@
       return;
     }
 
+    var EMAILJS_SERVICE_ID = 'service_moszoy6';
+    var EMAILJS_TEMPLATE_ID = 'template_w8dbulo';
+    var EMAILJS_PUBLIC_KEY = '88JGJZNLW2YF5hlU1';
+
+    if (window.emailjs && typeof window.emailjs.init === 'function') {
+      window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+    }
+
     contactForm.addEventListener('input', function () {
       if (!feedback.textContent) {
         return;
@@ -233,6 +241,31 @@
       feedback.textContent = '';
       feedback.classList.remove('error');
       feedback.classList.remove('success');
+    });
+
+    contactForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      if (!window.emailjs || typeof window.emailjs.sendForm !== 'function') {
+        feedback.textContent = 'No se pudo enviar el mensaje en este momento. Intentalo de nuevo.';
+        feedback.classList.remove('success');
+        feedback.classList.add('error');
+        return;
+      }
+
+      window.emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, contactForm)
+        .then(function () {
+          feedback.textContent = (window.i18n && window.i18n.t('contacto.form.feedbackSuccess')) ||
+            'Gracias. Tu mensaje se ha enviado correctamente.';
+          feedback.classList.remove('error');
+          feedback.classList.add('success');
+          contactForm.reset();
+        })
+        .catch(function () {
+          feedback.textContent = 'No se pudo enviar el mensaje en este momento. Intentalo de nuevo.';
+          feedback.classList.remove('success');
+          feedback.classList.add('error');
+        });
     });
   }
 
