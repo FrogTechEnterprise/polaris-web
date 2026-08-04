@@ -1160,7 +1160,7 @@
     window.addEventListener('resize', resize);
 
     coverImage = new Image();
-    coverImage.src = 'assets/images/hero-placeholder.jpg';
+    coverImage.src = 'assets/images/hero-placeholder.png';
     coverImage.addEventListener('load', function () {
       buildCover();
     });
